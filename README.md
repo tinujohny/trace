@@ -21,6 +21,8 @@ OPENAI_MODEL = "llama-3.3-70b-versatile"
 
 5. Deploy. The app runs without Node.js.
 
+**Note:** Do not add comments to `packages.txt` if you create one — Streamlit treats each line as an `apt` package name.
+
 ### Run locally (Streamlit)
 
 ```bash
