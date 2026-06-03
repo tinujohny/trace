@@ -144,23 +144,34 @@ div[data-testid="stBottomBlockContainer"] {
   box-sizing: border-box !important;
 }
 
-/* Text area wrapper must grow */
+/* Inner wrappers — no nested dark box (only the outer pill has background) */
+.stChatInput > div > div,
+[data-testid="stChatInput"] > div > div,
 .stChatInput [data-testid="stTextArea"],
+.stChatInput [data-testid="stTextArea"] > div,
+.stChatInput [data-testid="stTextArea"] > div > div,
+.stChatInput [data-testid="stTextArea"] fieldset,
 .stChatInput div[class*="stTextArea"],
+.stChatInput div[class*="stTextArea"] > div,
 [data-testid="stChatInput"] [data-testid="stTextArea"],
-[data-testid="stChatInput"] div[class*="stTextArea"] {
+[data-testid="stChatInput"] [data-testid="stTextArea"] > div,
+[data-testid="stChatInput"] [data-testid="stTextArea"] > div > div,
+[data-testid="stChatInput"] div[class*="stTextArea"],
+.stChatInput div[data-baseweb="base-input"],
+.stChatInput div[data-baseweb="textarea"],
+[data-testid="stChatInput"] div[data-baseweb="base-input"],
+[data-testid="stChatInput"] div[data-baseweb="textarea"] {
   flex: 1 1 auto !important;
   width: 100% !important;
   min-width: 0 !important;
   background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
-}
-
-.stChatInput [data-testid="stTextArea"] > div,
-[data-testid="stChatInput"] [data-testid="stTextArea"] > div {
-  width: 100% !important;
-  background: transparent !important;
-  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .stChatInput textarea,
@@ -170,12 +181,22 @@ div[data-testid="stBottomBlockContainer"] {
   max-height: 10rem !important;
   color: var(--trace-text) !important;
   background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
+  outline: none !important;
   font-size: 1rem !important;
   line-height: 1.5 !important;
   padding: 0.35rem 0 !important;
   resize: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+/* Streamlit theme paints a darker rectangle on textarea containers — override */
+.stChatInput [data-testid="stTextArea"] textarea,
+[data-testid="stChatInput"] [data-testid="stTextArea"] textarea {
+  background-color: transparent !important;
+  border-radius: 0 !important;
 }
 
 .stChatInput textarea::placeholder,
@@ -227,14 +248,21 @@ div[data-testid="stChatMessage"] {
   color: #fff !important;
 }
 
-/* Select / inputs in main */
+/* Select / inputs (not chat composer) */
 .stSelectbox > div > div,
 .stTextInput > div > div > input,
-.stTextArea textarea {
+section[data-testid="stSidebar"] .stTextArea textarea,
+.trace-batch-wrap .stTextArea textarea {
   background: var(--trace-composer) !important;
   color: var(--trace-text) !important;
   border-color: var(--trace-border) !important;
   border-radius: 8px !important;
+}
+
+/* Hide footer app label under composer */
+div[data-testid="stBottom"] [data-testid="stCaptionContainer"],
+div[data-testid="stBottom"] small {
+  display: none !important;
 }
 
 /* Trace layout */
