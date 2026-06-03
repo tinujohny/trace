@@ -9,15 +9,28 @@ def _esc(text: str) -> str:
     return html.escape(text)
 
 
-def render_message_html(role: str, content: str, claims: list[dict[str, Any]] | None = None, active_claim_id: str | None = None) -> str:
+def render_message_html(
+    role: str,
+    content: str,
+    claims: list[dict[str, Any]] | None = None,
+    active_claim_id: str | None = None,
+    claim_count: int = 0,
+) -> str:
     row_class = "user" if role == "user" else "assistant"
     label = "You" if role == "user" else "Assistant"
     body = _format_content_with_claims(content, claims or [], active_claim_id)
+    footer = ""
+    if claim_count > 0:
+        footer = (
+            f'<p class="trace-msg-footer">{claim_count} claims — '
+            "pick one in the evaluation panel →</p>"
+        )
     return f"""
     <div class="trace-msg-row {row_class}">
       <div class="trace-msg-inner">
         <div class="trace-msg-label">{label}</div>
         <div class="trace-msg-body">{body}</div>
+        {footer}
       </div>
     </div>
     """

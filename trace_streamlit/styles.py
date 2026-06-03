@@ -91,7 +91,22 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
   padding-right: 0 !important;
 }
 
-/* Centered chat column (thread + empty state + suggestions) */
+/* Chat thread — full width of column; content centered inside */
+.trace-chat-thread {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.trace-chat-thread [data-testid="stMarkdown"],
+.trace-chat-thread [data-testid="stMarkdownContainer"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .trace-chat-column {
   width: 100%;
   max-width: var(--trace-composer-max);
@@ -309,9 +324,18 @@ section.main .stButton > button {
 }
 
 .trace-msg-row {
-  width: 100%;
+  width: 100vw;
+  max-width: 100%;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   padding: 1.25rem 0;
-  border-bottom: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.trace-layout-split .trace-msg-row {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .trace-msg-row.user {
@@ -325,10 +349,26 @@ section.main .stButton > button {
 .trace-msg-inner {
   max-width: var(--trace-thread-max);
   margin: 0 auto;
-  padding: 0 1.5rem;
-  line-height: 1.6;
+  padding: 0 1.25rem;
+  line-height: 1.65;
   color: var(--trace-text);
   font-size: 0.9375rem;
+  text-align: left;
+}
+
+.trace-msg-body,
+.trace-msg-body p {
+  margin: 0;
+  text-align: left;
+  line-height: 1.65;
+  word-wrap: break-word;
+}
+
+.trace-msg-footer {
+  font-size: 0.75rem;
+  color: var(--trace-text-muted);
+  margin: 0.75rem 0 0;
+  text-align: left;
 }
 
 .trace-msg-label {
@@ -344,8 +384,11 @@ section.main .stButton > button {
   display: inline;
   background: var(--trace-claim-bg);
   border-bottom: 2px solid var(--trace-claim-border);
-  border-radius: 4px;
-  padding: 0 2px;
+  border-radius: 2px;
+  padding: 0 1px;
+  line-height: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   cursor: default;
 }
 
@@ -354,14 +397,25 @@ section.main .stButton > button {
   box-shadow: 0 0 0 1px var(--trace-claim-border);
 }
 
-.trace-eval-panel {
-  background: var(--trace-sidebar);
-  border-left: 1px solid var(--trace-border);
-  border-radius: 0;
-  padding: 1rem 1.25rem;
-  min-height: 70vh;
-  position: sticky;
-  top: 0;
+/* Eval column — Streamlit widgets only (no mixed HTML shell) */
+.trace-eval-col h3 {
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  color: var(--trace-text) !important;
+  margin: 0 0 0.25rem !important;
+}
+
+.trace-eval-col .eval-sub {
+  font-size: 0.75rem;
+  color: var(--trace-text-muted);
+  margin: 0 0 1rem;
+}
+
+.trace-eval-col div[data-testid="stRadio"] label {
+  text-align: left !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.35 !important;
+  padding: 0.5rem 0.6rem !important;
 }
 
 .trace-eval-panel h3 {
@@ -433,9 +487,9 @@ section.main .stButton > button {
   padding: 0 1rem;
 }
 
-/* Streamlit columns gap */
-div[data-testid="column"] {
-  padding: 0 !important;
+/* Default column padding (split layout overrides in layout.py) */
+section.main div[data-testid="column"] {
+  padding-top: 0 !important;
 }
 
 .stAlert {
