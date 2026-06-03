@@ -15,10 +15,10 @@ from trace_streamlit.config import (
     get_default_model,
 )
 from trace_streamlit.grounding import parse_source_urls
-from trace_streamlit.llm import chat_completion, evaluate_json
 from trace_streamlit.layout import inject_split_layout_css
+from trace_streamlit.llm import chat_completion, evaluate_json
 from trace_streamlit.styles import inject_styles
-from trace_streamlit.ui_helpers import render_message_html, render_signal_section
+from trace_streamlit.ui_helpers import format_assistant_body, render_signal_section
 
 st.set_page_config(
     page_title="Trace",
@@ -98,7 +98,6 @@ def render_sidebar() -> str:
         value=st.session_state.grounding_text,
         height=72,
         placeholder="One URL per line",
-        label_visibility="visible",
     )
     urls = parse_source_urls(st.session_state.grounding_text)
     if urls:
@@ -141,8 +140,25 @@ def _latest_eval_idx() -> int | None:
     return None
 
 
-def render_eval_panel(claims: list[dict], pipeline: str, model: str) -> None:
-    st.markdown('<div class="trace-eval-col">', unsafe_allow_html=True)
+def _render_messages(model: str) -> None:
+    for i, msg in enumerate(st.session_state.messages):
+        claims = None
+        if msg["role"] == "assistant" and i in st.session_state.evaluations:
+            claims = st.session_state.evaluations[i].get("claims", [])
+        active_id = st.session_state.selected_claim_id if msg["role"] == "assistant" else None
+
+        with st.chat_message(msg["role"]):
+            if msg["role"] == "assistant" and claims:
+                body = format_assistant_body(msg["content"], claims, active_id)
+                st.markdown(body, unsafe_allow_html=True)
+                st.caption(f"{len(claims)} claims — pick one in the evaluation panel →")
+            else:
+                st.markdown(msg["content"])
+
+
+def render_eval_panel(claims: list[dict], pipeline: str) -> None:
+    st.markdown('<span class="trace-eval-col" aria-hidden="true"></span>', unsafe_allow_html=True)
+
     sub = (
         "Calibration — predict before reveal"
         if st.session_state.calibration_enabled
@@ -158,12 +174,11 @@ def render_eval_panel(claims: list[dict], pipeline: str, model: str) -> None:
 
     if not claims:
         st.caption("Select a claim after the assistant replies.")
-        st.markdown("</div>", unsafe_allow_html=True)
         return
 
     claim_ids = [c["id"] for c in claims]
     labels = [
-        f"Claim {i + 1}: {c['text'][:60]}{'…' if len(c['text']) > 60 else ''}"
+        f"Claim {i + 1}: {c['text'][:56]}{'…' if len(c['text']) > 56 else ''}"
         for i, c in enumerate(claims)
     ]
     current = st.session_state.selected_claim_id
@@ -188,11 +203,7 @@ def render_eval_panel(claims: list[dict], pipeline: str, model: str) -> None:
     if st.session_state.calibration_enabled and not revealed:
         st.markdown("**What would you do with this claim?**")
         c1, c2, c3 = st.columns(3)
-        for col, choice, color in zip(
-            [c1, c2, c3],
-            ["trust", "verify", "skip"],
-            ["#22c55e", "#eab308", "#94a3b8"],
-        ):
+        for col, choice in zip([c1, c2, c3], ["trust", "verify", "skip"]):
             if col.button(choice.capitalize(), key=f"pred-{claim['id']}-{choice}", use_container_width=True):
                 st.session_state.calibration_records[claim["id"]] = {
                     "choice": choice,
@@ -204,7 +215,6 @@ def render_eval_panel(claims: list[dict], pipeline: str, model: str) -> None:
             st.rerun()
         if cal.get("choice"):
             st.caption("Signals hidden until you reveal.")
-            st.markdown("</div>", unsafe_allow_html=True)
             return
 
     if st.session_state.calibration_enabled and revealed and cal.get("choice"):
@@ -214,15 +224,12 @@ def render_eval_panel(claims: list[dict], pipeline: str, model: str) -> None:
 
     import html as html_mod
 
-    quote = html_mod.escape(claim["text"])
-    st.markdown(f'<blockquote class="trace-quote">{quote}</blockquote>', unsafe_allow_html=True)
+    st.markdown(f'<blockquote class="trace-quote">{html_mod.escape(claim["text"])}</blockquote>', unsafe_allow_html=True)
     st.markdown(
         f'<p class="trace-confidence">Confidence · {claim.get("confidence", "—").upper()}</p>',
         unsafe_allow_html=True,
     )
-
-    body_src = html_mod.escape(claim.get("source", "—")).replace("\n", "<br>")
-    st.markdown(render_signal_section("Source", body_src), unsafe_allow_html=True)
+    st.markdown(render_signal_section("Source", html_mod.escape(claim.get("source", "—")).replace("\n", "<br>")), unsafe_allow_html=True)
     for url in claim.get("groundingUrls", []):
         st.markdown(f"[{url}]({url})")
     st.markdown(
@@ -230,17 +237,13 @@ def render_eval_panel(claims: list[dict], pipeline: str, model: str) -> None:
         unsafe_allow_html=True,
     )
     assumptions = claim.get("assumptions", [])
-    if assumptions:
-        ass_html = "<br>".join(f"• {html_mod.escape(a)}" for a in assumptions)
-    else:
-        ass_html = "None listed."
+    ass_html = "<br>".join(f"• {html_mod.escape(a)}" for a in assumptions) if assumptions else "None listed."
     st.markdown(render_signal_section("Assumptions", ass_html), unsafe_allow_html=True)
     st.markdown(
         render_signal_section("Uncertainty", html_mod.escape(claim.get("uncertainty", "—"))),
         unsafe_allow_html=True,
     )
     st.caption(f"Pipeline: {pipeline}")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_chat(model: str) -> None:
@@ -251,21 +254,21 @@ def render_chat(model: str) -> None:
 
     if has_eval:
         inject_split_layout_css()
-        st.markdown('<div class="trace-layout-split">', unsafe_allow_html=True)
-        col_thread, col_eval = st.columns([3, 2], gap="small")
+
+    if has_eval:
+        col_thread, col_eval = st.columns([5, 3], gap="small")
     else:
         col_thread = st.container()
         col_eval = None
 
     with col_thread:
         st.markdown('<div class="trace-chat-thread">', unsafe_allow_html=True)
+
         if not st.session_state.messages:
             st.markdown(
                 """
-                <div class="trace-chat-column">
-                  <div class="trace-empty">
-                    <h2>What can I help with?</h2>
-                  </div>
+                <div class="trace-empty">
+                  <h2>What can I help with?</h2>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -278,30 +281,14 @@ def render_chat(model: str) -> None:
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
         else:
-            for i, msg in enumerate(st.session_state.messages):
-                claims = None
-                if msg["role"] == "assistant" and i in st.session_state.evaluations:
-                    claims = st.session_state.evaluations[i].get("claims", [])
-                active_id = st.session_state.selected_claim_id if msg["role"] == "assistant" else None
-                n_claims = len(claims) if claims else 0
-                st.markdown(
-                    render_message_html(
-                        msg["role"],
-                        msg["content"],
-                        claims,
-                        active_id,
-                        claim_count=n_claims,
-                    ),
-                    unsafe_allow_html=True,
-                )
+            _render_messages(model)
+
         st.markdown("</div>", unsafe_allow_html=True)
 
-    if col_eval is not None:
+    if col_eval is not None and has_eval and eval_idx is not None:
         with col_eval:
-            if has_eval and eval_idx is not None:
-                ev = st.session_state.evaluations[eval_idx]
-                render_eval_panel(ev.get("claims", []), ev.get("pipeline", "—"), model)
-        st.markdown("</div>", unsafe_allow_html=True)
+            ev = st.session_state.evaluations[eval_idx]
+            render_eval_panel(ev.get("claims", []), ev.get("pipeline", "—"), model)
 
     pending = st.session_state.pop("_pending_prompt", None)
     prompt = st.chat_input("Ask anything…") or pending
@@ -325,8 +312,9 @@ def render_chat(model: str) -> None:
         st.session_state.last_assistant_idx = assistant_idx
         with st.spinner("Evaluating claims…"):
             evaluate_message(assistant_idx, reply, model)
-        if st.session_state.evaluations[assistant_idx].get("claims"):
-            st.session_state.selected_claim_id = st.session_state.evaluations[assistant_idx]["claims"][0]["id"]
+        claims = st.session_state.evaluations.get(assistant_idx, {}).get("claims", [])
+        if claims:
+            st.session_state.selected_claim_id = claims[0]["id"]
         st.rerun()
 
 

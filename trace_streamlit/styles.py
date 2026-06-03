@@ -241,12 +241,6 @@ div[data-testid="stBottomBlockContainer"] {
   height: 1rem !important;
 }
 
-/* Hide default chat avatars for custom layout */
-div[data-testid="stChatMessage"] {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}
 
 /* Buttons */
 .stButton > button {
@@ -323,19 +317,14 @@ section.main .stButton > button {
   height: auto !important;
 }
 
+/* Message bands — stay inside column (no 100vw bleed) */
 .trace-msg-row {
-  width: 100vw;
-  max-width: 100%;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 1.25rem 0;
-  box-sizing: border-box;
-}
-
-.trace-layout-split .trace-msg-row {
   width: 100%;
-  margin-left: 0;
-  margin-right: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.1rem 0;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
 }
 
 .trace-msg-row.user {
@@ -344,6 +333,36 @@ section.main .stButton > button {
 
 .trace-msg-row.assistant {
   background: var(--trace-bg);
+}
+
+/* Native Streamlit chat bubbles in thread */
+.trace-chat-thread [data-testid="stChatMessage"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0.75rem 0 !important;
+  background: transparent !important;
+  border: none !important;
+  overflow-x: hidden !important;
+}
+
+.trace-chat-thread [data-testid="stChatMessage"] > div:last-child {
+  max-width: var(--trace-thread-max) !important;
+  margin: 0 auto !important;
+  padding: 0 0.25rem !important;
+  width: 100% !important;
+}
+
+.trace-chat-thread [data-testid="stChatMessage"][aria-label="Chat message from user"] {
+  background: var(--trace-user-band) !important;
+  margin: 0 !important;
+  padding: 1rem 0.5rem !important;
+  width: 100% !important;
+}
+
+.trace-chat-thread [data-testid="stChatMessage"][aria-label="Chat message from assistant"] {
+  background: var(--trace-bg) !important;
+  padding: 1rem 0.5rem !important;
 }
 
 .trace-msg-inner {

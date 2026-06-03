@@ -83,6 +83,17 @@ def _format_content_with_claims(
     return f'<p style="margin:0;white-space:pre-wrap;">{"".join(out)}</p>'
 
 
+def format_assistant_body(
+    content: str,
+    claims: list[dict[str, Any]] | None = None,
+    active_claim_id: str | None = None,
+) -> str:
+    """HTML body for assistant message with inline claim highlights."""
+    if not claims:
+        return content
+    return _format_content_with_claims(content, claims, active_claim_id)
+
+
 def render_signal_section(title: str, body: str) -> str:
     return f"""
     <div class="trace-signal-block">
