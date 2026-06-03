@@ -67,14 +67,13 @@ def _format_content_with_claims(
                 active = " active" if cid and cid == active_claim_id else ""
                 trusted = is_well_sourced_high_confidence(claim)
                 trusted_cls = " trace-claim--trusted" if trusted else ""
-                prefix = trusted_check_html() if trusted else ""
-                parts.append(
-                    (
-                        idx,
-                        end,
-                        f'<span class="trace-claim{active}{trusted_cls}">{prefix}{_esc(text)}</span>',
+                claim_html = f'<span class="trace-claim{active}{trusted_cls}">{_esc(text)}</span>'
+                if trusted:
+                    claim_html = (
+                        f'<span class="trace-claim-wrap">'
+                        f'{trusted_check_html()}{claim_html}</span>'
                     )
-                )
+                parts.append((idx, end, claim_html))
                 break
             start = idx + 1
 

@@ -439,12 +439,24 @@ section.main:has(.trace-chat-thread) [data-testid="stMarkdown"] {
   box-shadow: 0 0 0 1px var(--trace-claim-border);
 }
 
+.trace-claim-wrap {
+  display: inline;
+  white-space: inherit;
+}
+
 .trace-claim-check {
   color: #22c55e;
-  font-size: 0.8em;
   font-weight: 700;
-  margin-right: 0.15rem;
-  vertical-align: baseline;
+  line-height: 1;
+}
+
+/* Inline chat — sit on text line, outside underline */
+.trace-claim-check--inline {
+  display: inline-block;
+  font-size: 0.85em;
+  margin-right: 0.12em;
+  vertical-align: middle;
+  transform: translateY(0.06em);
 }
 
 .trace-claim-check-spacer {
@@ -456,8 +468,43 @@ section.main:has(.trace-chat-thread) [data-testid="stMarkdown"] {
   display: none !important;
 }
 
-section.main [data-testid="column"]:has(.trace-eval-col) [data-testid="stHorizontalBlock"] [data-testid="column"] {
-  align-items: flex-start !important;
+/* Eval panel — center tick beside claim button */
+section.main [data-testid="column"]:has(.trace-eval-col) [data-testid="stHorizontalBlock"] {
+  align-items: center !important;
+}
+
+section.main [data-testid="column"]:has(.trace-eval-col)
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  padding-top: 0 !important;
+}
+
+section.main [data-testid="column"]:has(.trace-eval-col)
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child
+  [data-testid="stMarkdownContainer"],
+section.main [data-testid="column"]:has(.trace-eval-col)
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child
+  [data-testid="stMarkdown"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 0 !important;
+}
+
+.trace-claim-check--panel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  transform: none;
 }
 
 section.main [data-testid="column"]:has(.trace-eval-col) .stButton > button {

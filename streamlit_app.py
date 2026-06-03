@@ -227,7 +227,7 @@ def render_eval_panel(claims: list[dict], pipeline: str) -> None:
         with col_mark:
             if is_well_sourced_high_confidence(c):
                 st.markdown(
-                    '<span class="trace-claim-check" title="High confidence with source">✓</span>',
+                    '<span class="trace-claim-check trace-claim-check--panel" title="High confidence with source">✓</span>',
                     unsafe_allow_html=True,
                 )
             else:

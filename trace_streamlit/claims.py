@@ -24,4 +24,4 @@ def is_well_sourced_high_confidence(claim: dict[str, Any]) -> bool:
 
 
 def trusted_check_html() -> str:
-    return '<span class="trace-claim-check" aria-hidden="true">✓</span>'
+    return '<span class="trace-claim-check trace-claim-check--inline" aria-hidden="true">✓</span>'

@@ -32,14 +32,14 @@ export function ClaimPickerList({
             type="button"
             onClick={() => onSelectClaim(claim.id)}
             aria-pressed={isActive}
-            className={`flex w-full items-start gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
+            className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
               isActive
                 ? "border-trace-claim-border bg-trace-claim-active-bg text-trace-text"
                 : "border-transparent bg-trace-composer/40 text-trace-text-muted hover:border-trace-border hover:bg-trace-composer"
             }`}
           >
             <span
-              className={`mt-0.5 w-3 shrink-0 text-center font-bold leading-none ${
+              className={`flex h-4 w-4 shrink-0 items-center justify-center text-sm font-bold leading-none ${
                 trusted ? "text-trace-confidence-high" : "text-transparent"
               }`}
               aria-hidden={!trusted}

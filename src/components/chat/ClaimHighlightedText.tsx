@@ -53,7 +53,7 @@ export function ClaimHighlightedText({
           >
             {trusted && (
               <span
-                className="mr-0.5 font-bold text-trace-confidence-high"
+                className="relative top-[0.08em] mr-0.5 inline-block align-middle text-sm font-bold leading-none text-trace-confidence-high"
                 aria-label="High confidence with source"
               >
                 ✓
