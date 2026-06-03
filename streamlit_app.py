@@ -252,17 +252,18 @@ def render_chat(model: str) -> None:
         eval_idx is not None and st.session_state.evaluations.get(eval_idx, {}).get("claims"),
     )
 
+    col_eval = None
     if has_eval:
         inject_split_layout_css()
-
-    if has_eval:
-        col_thread, col_eval = st.columns([5, 3], gap="small")
+        col_thread, col_eval = st.columns([1, 1], gap="small")
     else:
         col_thread = st.container()
-        col_eval = None
 
     with col_thread:
-        st.markdown('<div class="trace-chat-thread">', unsafe_allow_html=True)
+        st.markdown(
+            '<span class="trace-chat-thread" aria-hidden="true"></span>',
+            unsafe_allow_html=True,
+        )
 
         if not st.session_state.messages:
             st.markdown(
@@ -283,12 +284,10 @@ def render_chat(model: str) -> None:
         else:
             _render_messages(model)
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
     if col_eval is not None and has_eval and eval_idx is not None:
         with col_eval:
             ev = st.session_state.evaluations[eval_idx]
-            render_eval_panel(ev.get("claims", []), ev.get("pipeline", "—"), model)
+            render_eval_panel(ev.get("claims", []), ev.get("pipeline", "—"))
 
     pending = st.session_state.pop("_pending_prompt", None)
     prompt = st.chat_input("Ask anything…") or pending

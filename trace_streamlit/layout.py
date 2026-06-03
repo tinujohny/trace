@@ -39,11 +39,17 @@ section.main [data-testid="stHorizontalBlock"]:has(.trace-eval-col) {
   width: 100% !important;
 }
 
-/* Composer centered in thread area when eval visible */
+/* Composer sits under thread only (not under eval column) */
+body:has(.trace-eval-col) div[data-testid="stBottom"],
+body:has(.trace-eval-col) div[data-testid="stBottomBlockContainer"] {
+  padding-right: 22rem !important;
+  box-sizing: border-box !important;
+}
+
 body:has(.trace-eval-col) .stChatInput > div,
 body:has(.trace-eval-col) [data-testid="stChatInput"] > div {
-  width: min(36rem, calc(100vw - 22rem - 18rem)) !important;
-  max-width: min(36rem, calc(100vw - 22rem - 18rem)) !important;
+  width: min(36rem, 100%) !important;
+  max-width: min(36rem, 100%) !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }

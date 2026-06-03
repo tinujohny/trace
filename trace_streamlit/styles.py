@@ -91,20 +91,9 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
   padding-right: 0 !important;
 }
 
-/* Chat thread — full width of column; content centered inside */
+/* Marker only — real thread is the column that contains it */
 .trace-chat-thread {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.trace-chat-thread [data-testid="stMarkdown"],
-.trace-chat-thread [data-testid="stMarkdownContainer"] {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  display: none !important;
 }
 
 .trace-chat-column {
@@ -335,34 +324,49 @@ section.main .stButton > button {
   background: var(--trace-bg);
 }
 
-/* Native Streamlit chat bubbles in thread */
-.trace-chat-thread [data-testid="stChatMessage"] {
+/* Native Streamlit chat bubbles (marker lives in thread container/column) */
+section.main:has(.trace-chat-thread) [data-testid="stChatMessage"] {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 0.75rem 0 !important;
+  padding: 0.75rem 1rem !important;
   background: transparent !important;
   border: none !important;
   overflow-x: hidden !important;
+  box-sizing: border-box !important;
 }
 
-.trace-chat-thread [data-testid="stChatMessage"] > div:last-child {
+section.main:has(.trace-chat-thread) [data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"] {
+  display: none !important;
+}
+
+section.main:has(.trace-chat-thread) [data-testid="stChatMessage"] > div:last-child {
   max-width: var(--trace-thread-max) !important;
   margin: 0 auto !important;
-  padding: 0 0.25rem !important;
+  padding: 0 1rem !important;
   width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
-.trace-chat-thread [data-testid="stChatMessage"][aria-label="Chat message from user"] {
+section.main:has(.trace-chat-thread) [data-testid="stChatMessage"][aria-label="Chat message from user"] {
   background: var(--trace-user-band) !important;
   margin: 0 !important;
-  padding: 1rem 0.5rem !important;
+  padding: 1rem 1.25rem !important;
   width: 100% !important;
 }
 
-.trace-chat-thread [data-testid="stChatMessage"][aria-label="Chat message from assistant"] {
+section.main:has(.trace-chat-thread) [data-testid="stChatMessage"][aria-label="Chat message from assistant"] {
   background: var(--trace-bg) !important;
-  padding: 1rem 0.5rem !important;
+  padding: 1rem 1.25rem !important;
+}
+
+section.main:has(.trace-chat-thread) [data-testid="stMarkdownContainer"],
+section.main:has(.trace-chat-thread) [data-testid="stMarkdown"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
 }
 
 .trace-msg-inner {
@@ -417,20 +421,24 @@ section.main .stButton > button {
 }
 
 /* Eval column — Streamlit widgets only (no mixed HTML shell) */
-.trace-eval-col h3 {
+.trace-eval-col {
+  display: none !important;
+}
+
+section.main [data-testid="column"]:has(.trace-eval-col) h3 {
   font-size: 0.875rem !important;
   font-weight: 600 !important;
   color: var(--trace-text) !important;
   margin: 0 0 0.25rem !important;
 }
 
-.trace-eval-col .eval-sub {
+section.main [data-testid="column"]:has(.trace-eval-col) .eval-sub {
   font-size: 0.75rem;
   color: var(--trace-text-muted);
   margin: 0 0 1rem;
 }
 
-.trace-eval-col div[data-testid="stRadio"] label {
+section.main [data-testid="column"]:has(.trace-eval-col) div[data-testid="stRadio"] label {
   text-align: left !important;
   font-size: 0.8125rem !important;
   line-height: 1.35 !important;
