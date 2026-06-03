@@ -1,0 +1,35 @@
+@import "./critical.css";
+@import "tailwindcss";
+
+@source "../**/*.{js,ts,jsx,tsx}";
+
+@theme inline {
+  --color-trace-bg: var(--trace-bg);
+  --color-trace-sidebar: var(--trace-sidebar);
+  --color-trace-user-band: var(--trace-user-band);
+  --color-trace-composer: var(--trace-composer);
+  --color-trace-surface: var(--trace-surface);
+  --color-trace-surface-raised: var(--trace-surface-raised);
+  --color-trace-border: var(--trace-border);
+  --color-trace-text: var(--trace-text);
+  --color-trace-text-muted: var(--trace-text-muted);
+  --color-trace-accent: var(--trace-accent);
+  --color-trace-send-active: var(--trace-send-active);
+  --color-trace-send-active-fg: var(--trace-send-active-fg);
+  --color-trace-send-disabled: var(--trace-send-disabled);
+  --color-trace-send-disabled-fg: var(--trace-send-disabled-fg);
+  --color-trace-trust: var(--trace-trust);
+  --color-trace-trust-bg: var(--trace-trust-bg);
+  --color-trace-verify: var(--trace-verify);
+  --color-trace-verify-bg: var(--trace-verify-bg);
+  --color-trace-skip: var(--trace-skip);
+  --color-trace-skip-bg: var(--trace-skip-bg);
+  --color-trace-confidence-high: var(--trace-confidence-high);
+  --color-trace-confidence-medium: var(--trace-confidence-medium);
+  --color-trace-confidence-low: var(--trace-confidence-low);
+  --color-trace-claim-bg: var(--trace-claim-bg);
+  --color-trace-claim-border: var(--trace-claim-border);
+  --color-trace-claim-active-bg: var(--trace-claim-active-bg);
+  --font-sans: var(--trace-font-sans);
+  --font-mono: var(--trace-font-mono);
+}

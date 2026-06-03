@@ -1,0 +1,135 @@
+/**
+ * Plain CSS fallback — loads even if Tailwind/PostCSS fails.
+ * Keeps dark ChatGPT-like layout without utility classes.
+ */
+
+:root {
+  --trace-bg: #212121;
+  --trace-sidebar: #171717;
+  --trace-user-band: #303030;
+  --trace-composer: #2f2f2f;
+  --trace-surface: #212121;
+  --trace-surface-raised: #2f2f2f;
+  --trace-border: #ffffff1a;
+  --trace-text: #ececec;
+  --trace-text-muted: #b4b4b4;
+  --trace-accent: #10a37f;
+  --trace-send-active: #ffffff;
+  --trace-send-active-fg: #000000;
+  --trace-send-disabled: #676767;
+  --trace-send-disabled-fg: #b4b4b4;
+  --trace-trust: #22c55e;
+  --trace-trust-bg: #14532d40;
+  --trace-verify: #eab308;
+  --trace-verify-bg: #713f1240;
+  --trace-skip: #94a3b8;
+  --trace-skip-bg: #33415540;
+  --trace-confidence-high: #22c55e;
+  --trace-confidence-medium: #eab308;
+  --trace-confidence-low: #ef4444;
+  --trace-claim-bg: #58a6ff1f;
+  --trace-claim-border: #58a6ff;
+  --trace-claim-active-bg: #58a6ff47;
+  --trace-font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --trace-sidebar-width: 260px;
+  --trace-eval-width: 320px;
+  --trace-thread-max: 48rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--trace-bg);
+  color: var(--trace-text);
+  font-family: var(--trace-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.trace-shell {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--trace-bg);
+  color: var(--trace-text);
+}
+
+.trace-shell__sidebar {
+  display: none;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: var(--trace-sidebar-width);
+  background: var(--trace-sidebar);
+  border-right: 1px solid var(--trace-border);
+}
+
+.trace-shell__sidebar.is-open {
+  display: flex;
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+}
+
+.trace-shell__main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.trace-shell__thread {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.trace-shell__eval {
+  display: none;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: var(--trace-eval-width);
+  background: var(--trace-sidebar);
+  border-left: 1px solid var(--trace-border);
+}
+
+.trace-shell__eval.is-visible {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .trace-shell__sidebar {
+    display: flex;
+    position: relative;
+    z-index: auto;
+  }
+
+  .trace-shell__eval {
+    display: flex;
+  }
+}
+
+@media (max-width: 767px) {
+  .trace-shell__eval.is-visible {
+    width: 100%;
+    max-height: 40vh;
+    border-left: none;
+    border-top: 1px solid var(--trace-border);
+  }
+}

@@ -1,0 +1,54 @@
+/**
+ * Trace design tokens — ChatGPT-like shell + semantic evaluation colors.
+ */
+
+:root {
+  /* ChatGPT-like chrome (dark) */
+  --trace-bg: #212121;
+  --trace-sidebar: #171717;
+  --trace-user-band: #303030;
+  --trace-composer: #2f2f2f;
+  --trace-surface: #212121;
+  --trace-surface-raised: #2f2f2f;
+  --trace-border: #ffffff1a;
+  --trace-text: #ececec;
+  --trace-text-muted: #b4b4b4;
+
+  /* Brand (ChatGPT green) */
+  --trace-accent: #10a37f;
+  --trace-accent-muted: #0d8c6c;
+
+  /* Composer send control */
+  --trace-send-active: #ffffff;
+  --trace-send-active-fg: #000000;
+  --trace-send-disabled: #676767;
+  --trace-send-disabled-fg: #b4b4b4;
+
+  /* Calibration choices */
+  --trace-trust: #22c55e;
+  --trace-trust-bg: #14532d40;
+  --trace-verify: #eab308;
+  --trace-verify-bg: #713f1240;
+  --trace-skip: #94a3b8;
+  --trace-skip-bg: #33415540;
+
+  /* Confidence scale */
+  --trace-confidence-high: #22c55e;
+  --trace-confidence-medium: #eab308;
+  --trace-confidence-low: #ef4444;
+
+  /* Claim highlight */
+  --trace-claim-bg: #58a6ff1f;
+  --trace-claim-border: #58a6ff;
+  --trace-claim-active-bg: #58a6ff47;
+
+  /* Typography */
+  --trace-font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --trace-font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --trace-sidebar-width: 260px;
+  --trace-eval-width: 320px;
+  --trace-thread-max: 48rem;
+}
