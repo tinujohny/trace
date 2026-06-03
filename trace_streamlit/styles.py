@@ -16,7 +16,8 @@ CHATGPT_CSS = """
   --trace-claim-border: #58a6ff;
   --trace-claim-bg: rgba(88,166,255,0.12);
   --trace-claim-active: rgba(88,166,255,0.28);
-  --trace-thread-max: 42rem;
+  --trace-thread-max: 48rem;
+  --trace-composer-max: min(52rem, calc(100vw - 19rem));
   --trace-eval-width: 100%;
 }
 
@@ -84,34 +85,124 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
 /* Main blocks */
 .main .block-container {
   padding-top: 1rem !important;
-  padding-bottom: 6rem !important;
+  padding-bottom: 7.5rem !important;
+  max-width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Centered chat column (thread + empty state + suggestions) */
+.trace-chat-column {
+  width: 100%;
+  max-width: var(--trace-composer-max);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
+}
+
+/* Bottom chat composer — full-width bar, wide centered pill */
+div[data-testid="stBottom"],
+div[data-testid="stBottomBlockContainer"] {
+  width: 100% !important;
+  background: var(--trace-bg) !important;
+}
+
+.stChatInput,
+[data-testid="stChatInput"] {
+  background: var(--trace-bg) !important;
+  border-top: 1px solid var(--trace-border) !important;
+  padding: 1rem 1.25rem 1.5rem !important;
+  width: 100% !important;
   max-width: 100% !important;
 }
 
-/* Chat input — pill composer */
-.stChatInput {
-  background: var(--trace-bg) !important;
-  border-top: 1px solid var(--trace-border) !important;
-  padding: 0.75rem 1rem 1.25rem !important;
+/* Hide Streamlit's small caption above the input */
+.stChatInput p,
+.stChatInput label,
+[data-testid="stChatInput"] p,
+[data-testid="stChatInput"] label {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
 }
 
-.stChatInput > div {
-  max-width: var(--trace-thread-max) !important;
+/* Outer pill shell */
+.stChatInput > div,
+[data-testid="stChatInput"] > div {
+  width: var(--trace-composer-max) !important;
+  max-width: calc(100% - 2.5rem) !important;
   margin: 0 auto !important;
   background: var(--trace-composer) !important;
   border: 1px solid var(--trace-border) !important;
-  border-radius: 1.5rem !important;
+  border-radius: 1.75rem !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2) !important;
+  min-height: 3.25rem !important;
+  padding: 0.5rem 0.65rem 0.5rem 1.15rem !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 0.5rem !important;
+  box-sizing: border-box !important;
 }
 
-.stChatInput textarea {
+/* Text area wrapper must grow */
+.stChatInput [data-testid="stTextArea"],
+.stChatInput div[class*="stTextArea"],
+[data-testid="stChatInput"] [data-testid="stTextArea"],
+[data-testid="stChatInput"] div[class*="stTextArea"] {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.stChatInput [data-testid="stTextArea"] > div,
+[data-testid="stChatInput"] [data-testid="stTextArea"] > div {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.stChatInput textarea,
+[data-testid="stChatInput"] textarea {
+  width: 100% !important;
+  min-height: 1.75rem !important;
+  max-height: 10rem !important;
   color: var(--trace-text) !important;
   background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  padding: 0.35rem 0 !important;
+  resize: none !important;
 }
 
-.stChatInput button {
+.stChatInput textarea::placeholder,
+[data-testid="stChatInput"] textarea::placeholder {
+  color: var(--trace-text-muted) !important;
+  opacity: 0.85 !important;
+}
+
+.stChatInput button,
+[data-testid="stChatInput"] button {
+  flex-shrink: 0 !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  min-width: 2.25rem !important;
+  min-height: 2.25rem !important;
+  margin: 0 0 0.1rem 0 !important;
+  padding: 0 !important;
   background: var(--trace-text) !important;
   color: #000 !important;
   border-radius: 50% !important;
+  border: none !important;
+}
+
+.stChatInput button svg,
+[data-testid="stChatInput"] button svg {
+  width: 1rem !important;
+  height: 1rem !important;
 }
 
 /* Hide default chat avatars for custom layout */
@@ -171,12 +262,22 @@ div[data-testid="stChatMessage"] {
   margin: 0 0 1.5rem;
 }
 
-.trace-suggestions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+.trace-suggestions-wrap {
   width: 100%;
-  max-width: var(--trace-thread-max);
+  max-width: var(--trace-composer-max);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
+}
+
+/* Suggestion chips — match composer width */
+section.main .stButton > button {
+  min-height: 3rem !important;
+  padding: 0.75rem 1rem !important;
+  text-align: left !important;
+  line-height: 1.4 !important;
+  white-space: normal !important;
+  height: auto !important;
 }
 
 .trace-msg-row {

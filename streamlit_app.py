@@ -252,18 +252,23 @@ def render_chat(model: str) -> None:
         if not st.session_state.messages:
             st.markdown(
                 """
-                <div class="trace-empty">
-                  <h2>What can I help with?</h2>
+                <div class="trace-chat-column">
+                  <div class="trace-empty">
+                    <h2>What can I help with?</h2>
+                  </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
+            st.markdown('<div class="trace-suggestions-wrap">', unsafe_allow_html=True)
             s1, s2 = st.columns(2)
             for col, text in zip([s1, s2], SUGGESTIONS):
                 if col.button(text, key=f"sug-{text[:24]}", use_container_width=True):
                     st.session_state._pending_prompt = text
                     st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
         else:
+            st.markdown('<div class="trace-chat-column">', unsafe_allow_html=True)
             for i, msg in enumerate(st.session_state.messages):
                 claims = None
                 if msg["role"] == "assistant" and i in st.session_state.evaluations:
@@ -275,6 +280,7 @@ def render_chat(model: str) -> None:
                 )
                 if msg["role"] == "assistant" and claims:
                     st.caption(f"{len(claims)} claims — use the evaluation panel →")
+            st.markdown("</div>", unsafe_allow_html=True)
 
     if col_eval is not None:
         with col_eval:
