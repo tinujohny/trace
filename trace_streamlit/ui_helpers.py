@@ -44,7 +44,6 @@ def _format_content_with_claims(
     if not claims:
         return f'<p style="margin:0;white-space:pre-wrap;">{_esc(content)}</p>'
 
-    # Replace claims longest-first to avoid partial overlaps
     sorted_claims = sorted(claims, key=lambda c: len(c.get("text", "")), reverse=True)
     parts: list[tuple[int, int, str]] = []
     used_spans: list[tuple[int, int]] = []
@@ -83,16 +82,6 @@ def _format_content_with_claims(
         out.append(_esc(content[pos:]))
     return f'<p style="margin:0;white-space:pre-wrap;">{"".join(out)}</p>'
 
-
-def render_eval_panel_header(calibration: bool) -> str:
-    sub = "Calibration — predict before reveal" if calibration else "Trace signals"
-    badge = '<span class="trace-badge calibrating">Calibrating</span>' if calibration else ""
-    return f"""
-    <div class="trace-eval-panel">
-      <h3>Evaluation</h3>
-      <p class="trace-eval-sub">{sub}</p>
-      {badge}
-    """
 
 def render_signal_section(title: str, body: str) -> str:
     return f"""
