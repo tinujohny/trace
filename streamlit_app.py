@@ -18,6 +18,7 @@ from trace_streamlit.grounding import parse_source_urls
 from trace_streamlit.layout import inject_split_layout_css
 from trace_streamlit.llm import chat_completion, evaluate_json
 from trace_streamlit.styles import inject_styles
+from trace_streamlit.claims import is_well_sourced_high_confidence
 from trace_streamlit.ui_helpers import format_assistant_body, render_signal_section
 
 st.set_page_config(
@@ -32,6 +33,17 @@ SUGGESTIONS = [
     "Can solar alone power most countries soon?",
 ]
 
+USER_CONTEXT_OPTIONS: list[tuple[str, str]] = [
+    ("general_user", "General user"),
+    ("med_student", "Med student"),
+    ("engineer", "Engineer"),
+    ("lawyer", "Lawyer"),
+    ("founder", "Founder"),
+    ("marketing", "Marketing"),
+]
+USER_CONTEXT_VALUES = [v for v, _ in USER_CONTEXT_OPTIONS]
+USER_CONTEXT_LABELS = dict(USER_CONTEXT_OPTIONS)
+
 
 def _init_state() -> None:
     defaults = {
@@ -43,6 +55,7 @@ def _init_state() -> None:
         "selected_claim_id": None,
         "last_assistant_idx": None,
         "page": "Chat",
+        "user_context": "general_user",
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -108,8 +121,19 @@ def render_sidebar() -> str:
         value=st.session_state.calibration_enabled,
     )
 
-    st.sidebar.caption("—")
-    st.sidebar.caption("Next.js UI: `npm run dev` in repo.")
+    ctx_idx = (
+        USER_CONTEXT_VALUES.index(st.session_state.user_context)
+        if st.session_state.user_context in USER_CONTEXT_VALUES
+        else 0
+    )
+    st.session_state.user_context = st.sidebar.selectbox(
+        "Your context",
+        USER_CONTEXT_VALUES,
+        index=ctx_idx,
+        format_func=lambda v: USER_CONTEXT_LABELS[v],
+        help="Shapes how Trace interprets claims for your role (display only for now).",
+    )
+
     return model
 
 
@@ -128,6 +152,19 @@ def evaluate_message(assistant_idx: int, content: str, model: str) -> None:
         "claims": claims,
         "pipeline": pipeline,
     }
+
+
+def _context_badge_label() -> str:
+    key = st.session_state.get("user_context", "general_user")
+    return USER_CONTEXT_LABELS.get(key, "General user").lower()
+
+
+def render_context_badge() -> None:
+    label = _context_badge_label()
+    st.markdown(
+        f'<p class="trace-context-badge">Your context: <span>{label}</span></p>',
+        unsafe_allow_html=True,
+    )
 
 
 def _latest_eval_idx() -> int | None:
@@ -177,24 +214,35 @@ def render_eval_panel(claims: list[dict], pipeline: str) -> None:
         return
 
     claim_ids = [c["id"] for c in claims]
-    labels = [
-        f"Claim {i + 1}: {c['text'][:56]}{'…' if len(c['text']) > 56 else ''}"
-        for i, c in enumerate(claims)
-    ]
     current = st.session_state.selected_claim_id
     if current not in claim_ids:
         current = claim_ids[0]
         st.session_state.selected_claim_id = current
 
-    picked = st.radio(
-        "Claims",
-        claim_ids,
-        format_func=lambda cid: labels[claim_ids.index(cid)],
-        index=claim_ids.index(current),
-        label_visibility="collapsed",
-        key="claim_radio",
-    )
-    st.session_state.selected_claim_id = picked
+    st.markdown('<span class="trace-claim-list" aria-hidden="true"></span>', unsafe_allow_html=True)
+    for i, c in enumerate(claims):
+        truncated = c["text"][:56] + ("…" if len(c["text"]) > 56 else "")
+        is_active = c["id"] == current
+        col_mark, col_btn = st.columns([0.07, 0.93], gap="small")
+        with col_mark:
+            if is_well_sourced_high_confidence(c):
+                st.markdown(
+                    '<span class="trace-claim-check" title="High confidence with source">✓</span>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown('<span class="trace-claim-check-spacer"></span>', unsafe_allow_html=True)
+        with col_btn:
+            if st.button(
+                f"Claim {i + 1}: {truncated}",
+                key=f"claim-pick-{c['id']}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
+                st.session_state.selected_claim_id = c["id"]
+                st.rerun()
+
+    picked = st.session_state.selected_claim_id
     claim = next(c for c in claims if c["id"] == picked)
 
     cal = st.session_state.calibration_records.get(claim["id"], {})
@@ -264,6 +312,7 @@ def render_chat(model: str) -> None:
             '<span class="trace-chat-thread" aria-hidden="true"></span>',
             unsafe_allow_html=True,
         )
+        render_context_badge()
 
         if not st.session_state.messages:
             st.markdown(

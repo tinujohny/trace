@@ -272,6 +272,25 @@ div[data-testid="stBottom"] small {
   margin: 0 0 1rem;
 }
 
+.trace-context-badge {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--trace-text-muted);
+  margin: 0 auto 0.75rem;
+  padding: 0.35rem 0.75rem;
+  max-width: var(--trace-thread-max);
+  background: var(--trace-composer);
+  border: 1px solid var(--trace-border);
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.trace-context-badge span {
+  color: var(--trace-text);
+  font-weight: 500;
+}
+
 .trace-empty {
   display: flex;
   flex-direction: column;
@@ -418,6 +437,34 @@ section.main:has(.trace-chat-thread) [data-testid="stMarkdown"] {
 .trace-claim.active {
   background: var(--trace-claim-active);
   box-shadow: 0 0 0 1px var(--trace-claim-border);
+}
+
+.trace-claim-check {
+  color: #22c55e;
+  font-size: 0.8em;
+  font-weight: 700;
+  margin-right: 0.15rem;
+  vertical-align: baseline;
+}
+
+.trace-claim-check-spacer {
+  display: inline-block;
+  width: 0.85rem;
+}
+
+.trace-claim-list {
+  display: none !important;
+}
+
+section.main [data-testid="column"]:has(.trace-eval-col) [data-testid="stHorizontalBlock"] [data-testid="column"] {
+  align-items: flex-start !important;
+}
+
+section.main [data-testid="column"]:has(.trace-eval-col) .stButton > button {
+  text-align: left !important;
+  white-space: normal !important;
+  line-height: 1.35 !important;
+  min-height: 2.5rem !important;
 }
 
 /* Eval column — Streamlit widgets only (no mixed HTML shell) */

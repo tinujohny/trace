@@ -140,6 +140,16 @@ export function ChatShell() {
     persistCurrentSession,
   ]);
 
+  const latestEvaluatedClaims = useMemo((): Claim[] => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i];
+      if (msg.role !== "assistant") continue;
+      const claims = displayEvaluations[msg.id];
+      if (claims?.length) return claims;
+    }
+    return [];
+  }, [messages, displayEvaluations]);
+
   const messageSummary = useMemo(
     () => (activeMessageClaims.length > 0 ? getMessageSummary(activeMessageClaims) : null),
     [activeMessageClaims, getMessageSummary],
@@ -307,6 +317,7 @@ export function ChatShell() {
         claim={activeClaim}
         baseClaim={baseActiveClaim}
         messageClaims={activeMessageClaims}
+        claimListClaims={latestEvaluatedClaims}
         calibrationEnabled={calibrationEnabled}
         record={activeClaim ? getRecord(activeClaim.id) : undefined}
         messageSummary={messageSummary}
@@ -318,7 +329,9 @@ export function ChatShell() {
         onReveal={handleReveal}
         onRevealAll={handleRevealAll}
         canRevealAll={canRevealAll(activeMessageClaims)}
-        className={`trace-shell__eval ${activeClaim ? "is-visible" : ""}`}
+        activeClaimId={activeClaimId}
+        onSelectClaim={selectClaim}
+        className={`trace-shell__eval ${activeClaim || latestEvaluatedClaims.length > 0 ? "is-visible" : ""}`}
       />
     </div>
   );

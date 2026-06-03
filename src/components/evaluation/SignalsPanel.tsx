@@ -3,6 +3,7 @@
 import { CalibrationFeedback } from "@/components/evaluation/CalibrationFeedback";
 import { CalibrationPredict } from "@/components/evaluation/CalibrationPredict";
 import { CalibrationSummary } from "@/components/evaluation/CalibrationSummary";
+import { ClaimPickerList } from "@/components/evaluation/ClaimPickerList";
 import { ClaimSignalsView } from "@/components/evaluation/ClaimSignalsView";
 import { ClaimReviewEditor } from "@/components/review/ClaimReviewEditor";
 import type { MessageCalibrationSummary } from "@/hooks/useCalibration";
@@ -13,6 +14,8 @@ interface SignalsPanelProps {
   claim: Claim | null;
   baseClaim?: Claim | null;
   messageClaims?: Claim[];
+  /** Claims from the latest evaluated assistant reply (for picker list). */
+  claimListClaims?: Claim[];
   calibrationEnabled: boolean;
   record?: CalibrationRecord;
   messageSummary?: MessageCalibrationSummary | null;
@@ -28,6 +31,8 @@ interface SignalsPanelProps {
   onReveal: () => void;
   onRevealAll?: () => void;
   canRevealAll?: boolean;
+  activeClaimId?: string | null;
+  onSelectClaim?: (claimId: string) => void;
   className?: string;
 }
 
@@ -35,6 +40,7 @@ export function SignalsPanel({
   claim,
   baseClaim,
   messageClaims = [],
+  claimListClaims = [],
   calibrationEnabled,
   record,
   messageSummary,
@@ -46,6 +52,8 @@ export function SignalsPanel({
   onReveal,
   onRevealAll,
   canRevealAll,
+  activeClaimId = null,
+  onSelectClaim,
   className = "",
 }: SignalsPanelProps) {
   const revealed = claim ? Boolean(record?.revealedAt) : false;
@@ -72,6 +80,14 @@ export function SignalsPanel({
           role="region"
           aria-labelledby="signals-panel-heading"
         >
+          {claimListClaims.length > 0 && onSelectClaim && (
+            <ClaimPickerList
+              claims={claimListClaims}
+              activeClaimId={activeClaimId ?? claim?.id ?? null}
+              onSelectClaim={onSelectClaim}
+            />
+          )}
+
           {!claim ? (
             <EmptyPanel calibrationEnabled={calibrationEnabled} />
           ) : (

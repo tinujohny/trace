@@ -4,6 +4,8 @@ from __future__ import annotations
 import html
 from typing import Any
 
+from trace_streamlit.claims import is_well_sourced_high_confidence, trusted_check_html
+
 
 def _esc(text: str) -> str:
     return html.escape(text)
@@ -63,7 +65,16 @@ def _format_content_with_claims(
                 used_spans.append((idx, end))
                 cid = claim.get("id", "")
                 active = " active" if cid and cid == active_claim_id else ""
-                parts.append((idx, end, f'<span class="trace-claim{active}">{_esc(text)}</span>'))
+                trusted = is_well_sourced_high_confidence(claim)
+                trusted_cls = " trace-claim--trusted" if trusted else ""
+                prefix = trusted_check_html() if trusted else ""
+                parts.append(
+                    (
+                        idx,
+                        end,
+                        f'<span class="trace-claim{active}{trusted_cls}">{prefix}{_esc(text)}</span>',
+                    )
+                )
                 break
             start = idx + 1
 

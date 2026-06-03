@@ -1,6 +1,7 @@
 "use client";
 
 import { buildClaimSegments } from "@/lib/claim-segments";
+import { isWellSourcedHighConfidence } from "@/lib/claim-trust";
 import type { Claim } from "@/types";
 
 export type ClaimCalibrationStatus = "none" | "predicted" | "revealed";
@@ -32,6 +33,7 @@ export function ClaimHighlightedText({
         const { claim } = segment;
         const isActive = claim.id === activeClaimId;
         const calStatus = getCalibrationStatus?.(claim.id) ?? "none";
+        const trusted = isWellSourcedHighConfidence(claim);
 
         return (
           <button
@@ -49,6 +51,14 @@ export function ClaimHighlightedText({
               calStatus === "revealed" ? "decoration-trace-trust/30" : ""
             }`}
           >
+            {trusted && (
+              <span
+                className="mr-0.5 font-bold text-trace-confidence-high"
+                aria-label="High confidence with source"
+              >
+                ✓
+              </span>
+            )}
             {claim.text}
             {calStatus === "predicted" && (
               <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-trace-verify align-middle" />
